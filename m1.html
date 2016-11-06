@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Project Proposal</title>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" type="text/css" href="main.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">‮
+</head>
+
+<body>
+	<div class="container">
+		<div class="header">
+		</div>
+
+		<div class="title" id="PU"><center>
+			<h1>VIS M1 PROJECT PROPOSAL</h1>
+			<h2>Design Study Project</h2>
+	  </center></div>
+
+    <div class = "members">
+			<span>Reshad Dernjani | a1409161@unet.univie.ac.at </span>
+			<span>Anna Aichinger | anna.aich@protonmail.com </span>
+			<span>Aleksandar Doknic | a1409451@unet.univie.ac.at </span>
+			<span>Adrian Thöndel | a1308747@unet.univie.ac.at </span>
+		</div>
+
+		<div class="intro">
+			<h3>Visual Analysis of Global Land Grabbing Dynamics</h3>
+			<p>"Land Grabbing" is the term for a phenomenon happening globally since around 2000, describing a process whereby private corporations,
+				mainly based in the Global North, purchase vast amounts of land, mainly located in the Global South.
+				The goals are mostly the securing of scarce resources and acre land, in order to yield increased present or future profits.
+				There are often negative effects on local communities, ranging from displacements to environmental degradation.</p>
+			<p>
+		</div>
+
+		<div class = "tasks">
+			<h4> User Tasks </h4>
+				<p>User tasks should provide the following functionalities, based on <a href="https://www.grain.org/article/entries/4479-grain-releases-data-set-with-over-400-global-land-grabs"> this </a> dataset (or similar):</p>
+				<ul>
+					<li>Which countries grab land?</li>
+					<li>In which countries do land grabs occur?</li>
+					<li>How much land (in hectares) is being grabbed? (in absolute / relative terms) </li>
+					<li>How much money is being spent on the land?</li>
+					<li>Which economic sectors are involved in a deal, and to what degree?</li>
+					<li>How does economic data (e.g. HDI, GDP) of grabber countries compare with grabbed countries?</li>
+					<li>How does economic data (eg. HDI, GDP) of a particular country, or its proximity to the equator influence its land grab deals?</li>
+				</ul>
+			</p>
+		</div>
+
+		<div class = "implementation">
+			<h5> Implementation </h5>
+			<p>
+				The starting point are two interlinked diagrams (1,2);
+				<ul>
+					<li>(1) A world map, where grabber and grabbed countries are marked by two colours.
+						If a country is selected in (1), the countries are selected in (2) aswell, and vice versa. </li>
+					<li> There is a tooltip functionality (3) for each relevant country, that shows country specific economic data. </li>
+					<li>(2) A circular dependency diagram (hierarchical edge bundling chart) where the global flow of land, and the scale of the deals (in terms of hectares sold) are depicted.
+					 Each land deal in the dataset is depicted as <a href ="https://bl.ocks.org/mbostock/7607999"> a flow of land from one country (node) to another.</a> There are two directions of flows (marked by different colours): grabber country to grabbed, and vice versa.
+				  </li>
+					<li> A tooltip (4) for each country shows detailed transaction information:
+							<ul>
+								<li>Total sold, </li>
+								<li>total bought, </li>
+								<li>average purchase price, </li>
+								<li>average selling price, and </li>
+								<li>type of economic sector. </li>
+					</li>
+				</ul>
+				<li> For the exploration of user-specific interests, filters could be applied based on HDI or proximity to the equator, e.g. select only countries with a HDI under 0.5. </li>
+			</ul>
+			</p>
+    </div>
+
+
+		<div class="footer">
+		</div>
+
+	</div>
+	<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+
+</body>
+
+
+
+
+</html>
