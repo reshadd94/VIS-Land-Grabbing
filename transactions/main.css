@@ -1,0 +1,18 @@
+.transactiondiv{
+	float: right;
+
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+	border-radius: 5px;
+	box-shadow: 3px 3px 3px black;
+
+	width: 200px;
+	height: 100px;
+
+	overflow: scroll;
+
+	font-family: Arial;
+
+	font-size: 10px;
+}

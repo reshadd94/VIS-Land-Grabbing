@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<html>
+<body oncontextmenu="return false">
+  <script src="d3.v3.min.js"></script>
+  <script src="topojson.v1.min.js"></script>
+  <script src="datamaps.world.min.js"></script>
+  <div id="container1" style="position: relative; width: 80%; max-height: 450px;"></div>
+  <div id="transactioncontainer" class="transactiondiv"></div>
+ 
+     
+     <script>
+     //Get all available countries from datamap
+      var countries = Datamap.prototype.worldTopo.objects.world.geometries;
+
+      //helper function to translate countryname in csv to countrycode for datamap
+      function getCountryCode(countryname){
+        for (var i = 0, j = countries.length; i < j; i++) {
+          if(countries[i].properties.name == countryname){
+              return countries[i].id;
+          }
+        }
+      }
+
+
+    var csvObjData = [];
+
+     //load data from csv
+    var csvData = d3.csv("../csv/landgrabbing2012.csv", function(data){
+        //convert the data
+        data.forEach(function(data){
+          data.Hectares = +data.Hectares;
+          csvObjData.push({Landgrabbed: data.Landgrabbed, Landgrabber: data.Landgrabber, Base: data.Base, Sector: data.Sector, Hectares: data.Hectares, Production: data.Production});
+        });
+    });
+
+
+
+
+		//i love datamaps! And I love them too!
+      	//basic map config with custom fills, mercator projection
+      var map = new Datamap({
+        scope: 'world',
+        element: document.getElementById('container1'),
+
+		geographyConfig: {
+			highlightBorderColor: '#bada55',
+	   		popupTemplate: function(geography, data) {
+				//======================================================================================
+				//===========================MOUSEOVER CONTENT COMES HERE===============================
+				//======================================================================================
+		 		return '<div class="hoverinfo">' + geography.properties.name + ' <br>Left Click for grabbings, Right Click for grabbers! '
+			},
+			highlightBorderWidth: 3
+		},
+
+        projection: 'mercator',
+        height: 500,
+
+		//======================================================================================
+		//=============================WHICH COUNTRY COLORS EXIST===============================
+		//======================================================================================
+        fills: {
+          defaultFill: '#f0af0a',
+          lt50: 'rgba(0,244,244,0.9)',
+          gt50: 'red'
+        },
+        
+
+		//======================================================================================
+		//============================ASSIGNING COLORS TO COUNTRY===============================
+		//======================================================================================
+        data: {
+          USA: {fillKey: 'lt50' },
+          RUS: {fillKey: 'lt50' },
+          CAN: {fillKey: 'lt50' },
+          BRA: {fillKey: 'gt50' },
+          ARG: {fillKey: 'gt50'},
+          COL: {fillKey: 'gt50' },
+          AUS: {fillKey: 'gt50' },
+          ZAF: {fillKey: 'gt50' },
+          MAD: {fillKey: 'gt50' }       
+        },
+
+
+    //======================================================================================
+    //============================Add On Click Listener for Countries=======================
+    //======================================================================================
+        done: function(datamap) {
+            //left click
+            datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                //alert(geography.properties.name);
+                getMyGrabbings(geography.properties.name);
+            });
+
+            //right click
+            datamap.svg.selectAll('.datamaps-subunit').on('contextmenu', function(geography) {
+                //alert('success!');
+                getMyGrabbers(geography.properties.name);
+                return false;
+            }, false);
+        }
+      })
+      
+      
+	//======================================================================================
+	//============================HERE COME THE EDGES=======================================
+	//======================================================================================
+      map.arc([], {strokeWidth: 2});
+       
+	//======================================================================================
+	//==============HERE ARE BUBBLES WITH MOUSEOVER IN CASE WE NEED THEM====================
+	//======================================================================================
+     map.bubbles([
+       {name: 'Hot', latitude: 21.32, longitude: 5.32, radius: 10, fillKey: 'gt50'},
+       {name: 'Chilly', latitude: -25.32, longitude: 120.32, radius: 18, fillKey: 'lt50'},
+       {name: 'Hot again', latitude: 21.32, longitude: -84.32, radius: 8, fillKey: 'gt50'},
+
+     ], {
+       popupTemplate: function(geo, data) {
+         return "<div class='hoverinfo'>It is " + data.name + "</div>";
+       }
+     });
+
+
+
+
+
+  //======================================================================================
+  //==============All functions to generate the grabbing Transactions=====================
+  //======================================================================================
+
+    //helper function to clear all lines from the map arc
+    function clearMapArc(){
+      map.arc([], {});
+      document.getElementById("transactioncontainer").innerHTML = "";
+    }
+
+    //function to get all grabbings of one country
+    function getMyGrabbings(grabbername){
+      console.log("grabbings");
+      var grabbings = [];
+      var help;
+
+      csvObjData.forEach(function(data){
+        if(data.Base === grabbername){
+          help = data.Landgrabbed;
+
+          //if name is already stored return to avoid multiple edges
+          for(var i = 0; i < grabbings.length; i++){
+            if(grabbings[i] === help){
+              return;
+            }
+          }
+          //else store it in Array
+          grabbings.push(help);
+        }
+      });
+
+      //generate new arc array
+      arcArray = [];
+      var base = getCountryCode(grabbername);
+      var dest;
+
+      for(var i = 0; i < grabbings.length;i++){
+        dest = getCountryCode(grabbings[i]);
+        if(base == undefined || dest == undefined){
+          return;
+        }
+
+        arcArray.push({origin: base, destination: dest});
+      }
+
+      //add to map
+      clearMapArc();
+      map.arc(arcArray, {strokeWidth: 2, strokeColor: 'green'});
+
+      //create the transaction data
+      createGrabbingsDivContent(grabbername);
+    }
+
+
+    function createGrabbingsDivContent(grabbername){
+      var totalHectares = 0;
+      var contentArray = [];
+
+      csvObjData.forEach(function(data){
+        if(data.Base === grabbername){
+          totalHectares += data.Hectares;
+          contentArray.push('<li>' + data.Landgrabbed + ": " + data.Hectares + " Hectares</li>");
+        }
+      });
+
+      document.getElementById("transactioncontainer").innerHTML = "<ul><h1>" + grabbername + "</h1>" + "<h2>Grabbed " + totalHectares + " Hectares</h2>" + contentArray + "</ul>";
+    }
+
+
+    //function to get all grabbers of one country
+    function getMyGrabbers(grabbedname){
+      console.log("grabbers");
+      var grabbers = [];
+      var help;
+
+      csvObjData.forEach(function(data){
+        if(data.Landgrabbed === grabbedname){
+          help = data.Base;
+
+          //if name is already stored return to avoid multiple edges
+          for(var i = 0; i < grabbers.length; i++){
+            if(grabbers[i] === help){
+              continue;
+            }
+          }
+          //else store it in Array
+          grabbers.push(help);
+        }
+      });
+
+      //generate new arc array
+      arcArray = [];
+      var base = getCountryCode(grabbedname);
+      var dest;
+
+      for(var i = 0; i < grabbers.length;i++){
+        dest = getCountryCode(grabbers[i]);
+        if(base == undefined || dest == undefined){
+          continue;
+        }
+
+        arcArray.push({origin: dest, destination: base});
+      }
+
+      //add to map
+      clearMapArc();
+      map.arc(arcArray, {strokeWidth: 2, strokeColor: 'red'});
+
+      //create the transaction data
+      createGrabbersDivContent(grabbedname);
+    }
+
+
+    function createGrabbersDivContent(grabbedname){
+      var totalHectares = 0;
+      var contentArray = [];
+
+      csvObjData.forEach(function(data){
+        if(data.Landgrabbed === grabbedname){
+          totalHectares += data.Hectares;
+          contentArray.push('<li>' + data.Hectares + " Hectares belong to: " + data.Base + "</li>");
+        }
+      });
+
+      document.getElementById("transactioncontainer").innerHTML = "<ul><h1>" + grabbedname + "</h1>" + "<h2>Got " + totalHectares + " Hectares grabbed</h2>" + contentArray + "</ul>";
+    }
+
+
+
+     </script>
+</body>
+</html>
