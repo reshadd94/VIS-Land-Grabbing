@@ -70,27 +70,42 @@ d3.csv("landgrabbing2012.csv", function(grab) {
 
       };
 
-	//check if country is grabbed -> red
-	for (i=0; i<grab.length; i++) {
-		dmap.data[getCountryCode(grab[i].Landgrabbed)] = {fillKey: 'colorGrabbed'};
-	}
+	var grabbedCountries = {};
+	var grabberCountries = {};
+	var mixedCountries = {};
 
-	//check if country is grabber -> green
+	//Fill list: grabbed countries
 	for (i=0; i<grab.length; i++) {
-		//check if is also a grabbed -> yellow
-		if(getCountryCode(grab[i].Base) in dmap.data) {
-			dmap.data[getCountryCode(grab[i].Base)] = {fillKey: 'colorGrabber'};
+		grabbedCountries[grab[i].Landgrabbed] = 0;
+	}
+	//fill lists: grabber and mixed countries
+	for (i=0; i<grab.length; i++) {
+		if(grab[i].Base in grabbedCountries) {
+			mixedCountries[grab[i].Base] = 0;
+			delete grabbedCountries[grab[i].Base];
 		} else {
-			dmap.data[getCountryCode(grab[i].Base)] = {fillKey: 'colorBoth'};
+			grabberCountries[grab[i].Base] = 0;
 		}
 	}
 
-	var map = new Datamap(dmap);
-      
-	console.log(dmap.data);
-	for (i=0; i<grab.length; i++) {
-		//console.log(grab[i].Landgrabbed);
+	for (var i in grabbedCountries) {
+		var ccode = getCountryCode(i);
+		dmap.data[ccode] = { fillKey: 'colorGrabbed' };
 	}
+
+	for (i in grabberCountries) {
+		var ccode = getCountryCode(i);
+		dmap.data[ccode] = { fillKey: 'colorGrabber' };
+	}
+
+	for (i in mixedCountries) {
+		var ccode = getCountryCode(i);
+		dmap.data[ccode] = { fillKey: 'colorBoth' };
+	}
+
+	console.log(dmap.data);
+
+	var map = new Datamap(dmap);
       
 	//======================================================================================
 	//============================HERE COME THE EDGES=======================================
