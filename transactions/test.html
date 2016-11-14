@@ -132,6 +132,7 @@
   //======================================================================================
   //==============All functions to generate the grabbing Transactions=====================
   //======================================================================================
+    var fakeData = [{res: "Oil", count: 20},{res: "Grain", count: 33}, {res: "Coconuts", count: 50}, {res: "Candy", count: 34}, {res: "Palmoil", count: 10}];
 
     //helper function to clear all lines from the map arc
     function clearMapArc(){
@@ -195,6 +196,47 @@
       });
 
       document.getElementById("transactioncontainer").innerHTML = "<ul><h1>" + grabbername + "</h1>" + "<h2>Grabbed " + totalHectares + " Hectares</h2>" + contentArray + "</ul>";
+
+
+      //Bar Chart
+      var width = 400, padding = 10, height = 80, barOffset = -20; 
+      var minX = 0;
+      var maxX = 50* fakeData.length;
+
+      var minY = d3.min(fakeData.map(function(d){return d.count}));
+      var maxY = d3.max(fakeData.map(function(d){return d.count}));
+
+      //create domain and range scales 
+      var x = d3.scale.linear()
+        .domain([minX, maxX])
+        .range([padding, width-padding]);
+
+      var y = d3.scale.linear()
+        .domain([minY, maxY])
+        .range([padding, height-padding]);
+
+      //create svg
+      var svg = d3.select("#transactioncontainer").append("svg")
+        .attr("id", "svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("class", "svg");    
+
+      var group = svg.append("g")
+        .attr("transform", "translate(20,0)");
+
+      var bars = group.selectAll(".bar")
+        .data(fakeData)
+        .enter()
+        .append("g");
+
+      bars.append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d){ barOffset+=40; return x(barOffset);})
+        .attr("y", function(d){ return height - y(d.count);})
+        .attr("width", function(d){return 20;})
+        .attr("height", function(d){return y(d.count);})
+
     }
 
 
