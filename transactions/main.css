@@ -21,6 +21,25 @@
 	box-shadow: 3px 3px 5px green;
 }
 
+.hide{
+	display: none;
+}
+
+.hideparent{
+	padding: 2px;
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+}
+
+.hideparent:hover .hide{
+	display: block;
+}
+
 .bar{
 	fill: green;
+}
+
+.orangebar{
+	fill: orange;
 }
