@@ -1,1 +1,1 @@
-"Land Grabbing" is the term for a phenomenon happening globally since around 2000, describing a process whereby private corporations, mainly based in the Global North, purchase vast amounts of land, mainly located in the Global South. The goals are mostly the securing of scarce resources and acre land, in order to yield increased present or future profits. There are often negative effects on local communities, ranging from displacements to environmental degradation.
+REPOSITORY BITTE NICHT MEHR VERWENDEN, NEUES REPOSITORY PER E-MAIL EINLADUNG
